@@ -1,0 +1,16 @@
+@layer base {
+
+    html,
+    body,
+    #__next {
+        height: 100%;
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
