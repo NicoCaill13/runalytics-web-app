@@ -3,28 +3,18 @@ export const metadata = {
   description: 'Coach Intelligence for runners',
 };
 
+import DashboardNav from '@/components/navbar/DashboardNav';
 import '../styles/globals.css';
-import Image from 'next/image';
-import Link from 'next/link';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className="min-h-screen">
-        {/* Header minimal pour check visuel */}
-        <header className="sticky top-0 z-20 border-b bg-white/90 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-            <div className="flex items-center gap-3">
-              <Image src="/logo.png" width={36} height={36} alt="Runalytics" />
-              <span className="text-lg font-semibold">Runalytics</span>
-            </div>
-            <nav className="flex gap-3">
-              <Link href="/login" className="btn btn-ghost text-sm">Login</Link>
-              <Link href="/" className="btn btn-primary text-sm">Dashboard</Link>
-            </nav>
-          </div>
-        </header>
-        {children}
+      <body className="min-h-dvh bg-white text-black">
+        {/* Synchronise localStorage -> cookie pour le middleware */}
+        {/* Header global, full width */}
+        <DashboardNav />
+        {/* Contenu de page (tu peux le contraindre en largeur ici si tu veux) */}
+        <main className="min-h-[calc(100dvh-150px)]">{children}</main>
       </body>
     </html>
   );

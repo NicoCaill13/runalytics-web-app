@@ -1,41 +1,57 @@
-export type JwtPayload = {
-  sub: string;
-  exp?: number; // seconds since epoch
-  iat?: number;
-  [k: string]: unknown;
-};
+// Utilitaires JWT côté client (validation "basique" = expiration uniquement)
 
-const STORAGE_KEY = 'runalytics.jwt';
-
-export function setTokenFromString(token: string) {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, token);
-}
-
-export function getTokenFromStorage(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(STORAGE_KEY);
-}
-
-export function clearToken() {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(STORAGE_KEY);
-}
-
-export function decodeJwt(token: string): JwtPayload | null {
+export function getStoredJwt(): string | null {
   try {
-    const base64 = token.split('.')[1];
-    if (!base64) return null;
-    const json = atob(base64.replace(/-/g, '+').replace(/_/g, '/'));
-    return JSON.parse(json) as JwtPayload;
+    return localStorage.getItem("runalytics.jwt");
   } catch {
     return null;
   }
 }
 
-export function isTokenExpired(token: string): boolean {
-  const payload = decodeJwt(token);
-  if (!payload?.exp) return false;
-  const now = Math.floor(Date.now() / 1000);
-  return payload.exp <= now;
+export function setStoredJwt(token: string) {
+  try {
+    localStorage.setItem("runalytics.jwt", token);
+  } catch {
+    // ignore
+  }
+}
+
+export function removeStoredJwt() {
+  try {
+    localStorage.removeItem("runalytics.jwt");
+  } catch {
+    // ignore
+  }
+}
+
+/** Decode base64url en objet, ou null si erreur */
+function decodePayload(token: string): any | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) return null;
+    const payload = parts[1]
+      .replace(/-/g, "+")
+      .replace(/_/g, "/")
+      .padEnd(Math.ceil(parts[1].length / 4) * 4, "=");
+    const json = atob(payload);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
+/** "Validité" côté client = présence + exp future (signature NON vérifiée côté client) */
+export function isJwtValid(token: string | null): boolean {
+  if (!token) return false;
+  const payload = decodePayload(token);
+  if (!payload) return false;
+  // exp = seconds since epoch
+  if (typeof payload.exp !== "number") return false;
+  const nowSec = Math.floor(Date.now() / 1000);
+  return payload.exp > nowSec;
+}
+
+/** Détecte une forme JWT simple */
+export function looksLikeJwt(value: string): boolean {
+  return /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/.test(value);
 }

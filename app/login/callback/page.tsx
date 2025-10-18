@@ -1,31 +1,58 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuthStore } from '@/lib/store';
-import { setTokenFromString } from '@/lib/auth';
+import { useEffect, useState } from 'react';
+
+function looksLikeJwt(v: string) {
+    return /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/.test(v);
+}
+
+function getNextParam() {
+    try {
+        const p = new URLSearchParams(window.location.search);
+        const n = p.get('next');
+        if (n && n.startsWith('/')) return n;
+    } catch { }
+    return '/';
+}
 
 export default function LoginCallbackPage() {
-    const router = useRouter();
-    const params = useSearchParams();
-    const setToken = useAuthStore((s) => s.setToken);
-    const bootstrapFromToken = useAuthStore((s) => s.bootstrapFromToken);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const token = params.get('token');
-        if (token) {
-            setTokenFromString(token); // localStorage
-            setToken(token);
-            bootstrapFromToken(token); // récupère user du payload si dispo
-            router.replace('/');
-        } else {
-            router.replace('/login');
-        }
-    }, [params, router, setToken, bootstrapFromToken]);
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token') || '';
+            if (!looksLikeJwt(token)) {
+                setError('Token invalide ou manquant.');
+                return;
+            }
 
-    return (
-        <main className="grid min-h-screen place-items-center p-6">
-            <p className="text-sm text-neutral-600">Connexion en cours…</p>
-        </main>
-    );
+            // 1) stocke en localStorage (specs)
+            localStorage.setItem('runalytics.jwt', token);
+
+            // 2) set cookie lisible par le middleware (non HttpOnly)
+            document.cookie = `runalytics.jwt=${token}; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+
+            // 3) redirige vers next=/... ou /
+            const next = getNextParam();
+            window.location.replace(next);
+        } catch (e: any) {
+            setError(e?.message || 'Erreur inconnue.');
+        }
+    }, []);
+
+    if (error) {
+        return (
+            <div className="min-h-dvh grid place-items-center p-6">
+                <div className="max-w-md text-center">
+                    <h1 className="text-xl font-semibold mb-2">Échec de la connexion</h1>
+                    <p className="text-sm text-neutral-600 mb-4">{error}</p>
+                    <a href="/login" className="underline">Retour à la page de connexion</a>
+                </div>
+            </div>
+        );
+    }
+
+    // Évite le flash
+    return null;
 }
