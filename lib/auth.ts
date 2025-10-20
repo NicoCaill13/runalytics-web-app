@@ -25,7 +25,7 @@ export function removeStoredJwt() {
 }
 
 /** Decode base64url en objet, ou null si erreur */
-function decodePayload(token: string): any | null {
+export function decodePayload(token: string): any | null {
   try {
     const parts = token.split(".");
     if (parts.length < 2) return null;
@@ -40,18 +40,53 @@ function decodePayload(token: string): any | null {
   }
 }
 
-/** "Validité" côté client = présence + exp future (signature NON vérifiée côté client) */
 export function isJwtValid(token: string | null): boolean {
   if (!token) return false;
-  const payload = decodePayload(token);
+  const payload = decodeExp(token);
   if (!payload) return false;
   // exp = seconds since epoch
-  if (typeof payload.exp !== "number") return false;
+  if (typeof payload !== "number") return false;
   const nowSec = Math.floor(Date.now() / 1000);
-  return payload.exp > nowSec;
+  return payload > nowSec;
 }
 
 /** Détecte une forme JWT simple */
 export function looksLikeJwt(value: string): boolean {
   return /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/.test(value);
+}
+
+export function decodeExp(token: string): number | null {
+  try {
+    const [, payload] = token.split('.');
+    if (!payload) return null;
+    const b64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const pad = '='.repeat((4 - (b64.length % 4)) % 4);
+    const json = atob(b64 + pad);
+    const data = JSON.parse(json);
+    return typeof data.exp === 'number' ? data.exp : null;
+  } catch {
+    return null;
+  }
+}
+
+export function isJwtValidInLocalStorage(): boolean {
+  try {
+    const t = localStorage.getItem('runalytics.jwt');
+    if (!t || !looksLikeJwt(t)) return false;
+    const exp = decodeExp(t);
+    if (!exp) return false;
+    const now = Math.floor(Date.now() / 1000);
+    return exp > now;
+  } catch {
+    return false;
+  }
+}
+
+export function hasJwt(): boolean {
+  try {
+    const t = localStorage.getItem('runalytics.jwt');
+    return typeof t === 'string' && t.length > 0;
+  } catch {
+    return false;
+  }
 }

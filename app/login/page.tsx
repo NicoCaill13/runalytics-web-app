@@ -1,13 +1,49 @@
 'use client';
 
-export default function LoginPage() {
-    const apiBase = process.env.BACK_APP_URL ?? 'http://localhost:3000';
-    const backendLogin = `${apiBase.replace(/\/+$/, '')}/api/auth/login`; // si ton Nest a un prefix 'api'
+import { useCallback, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { looksLikeJwt } from '@/lib/auth';
+import { useAuthStore } from '@/store/auth';
 
-    function startLogin() {
-        // redirige le navigateur : Nest -> Strava -> callback front
-        window.location.href = backendLogin;
-    }
+const API_BASE = (process.env.BACK_APP_URL ?? 'http://localhost:3000');
+const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
+
+export default function LoginPage() {
+    const router = useRouter();
+    const params = useSearchParams();
+    const isAuth = useAuthStore((s) => s.isAuthenticated);
+
+    // Si déjà connecté, redirige en SPA
+    useEffect(() => {
+        try {
+            const t = localStorage.getItem('runalytics.jwt');
+            if (t && looksLikeJwt(t)) {
+                const next = params.get('next') || '/';
+                router.replace(next);
+            }
+        } catch { }
+    }, [params, router, isAuth]);
+
+    const [loading, setLoading] = useState(false);
+    const [err, setErr] = useState<string | null>(null);
+
+    const startLogin = useCallback(async () => {
+        setLoading(true);
+        setErr(null);
+        try {
+            const res = await fetch(LOGIN_URL, {
+                method: 'GET',
+                headers: { Accept: 'application/json' },
+            });
+            if (!res.ok) throw new Error(`Backend HTTP ${res.status}`);
+            const data = await res.json();
+            if (!data?.url) throw new Error('URL OAuth manquante');
+            window.location.assign(data.url);
+        } catch (e: any) {
+            setErr(e?.message || 'Erreur réseau');
+            setLoading(false);
+        }
+    }, []);
 
     return (
         <div className="min-h-dvh grid place-items-center px-4">
@@ -17,14 +53,15 @@ export default function LoginPage() {
                         <div className="text-2xl font-semibold tracking-tight">Runalytics</div>
                         <div className="mt-1 text-sm text-neutral-500">Connecte-toi pour continuer</div>
                     </div>
-
                     <button
                         type="button"
                         onClick={startLogin}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-black text-white font-semibold shadow hover:opacity-90 active:opacity-80 transition"
+                        disabled={loading}
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-black text-white font-semibold shadow hover:opacity-90 active:opacity-80 transition disabled:opacity-50"
                     >
-                        Se connecter
+                        {loading ? 'Connexion…' : 'Se connecter'}
                     </button>
+                    {err && <div className="mt-4 text-[12px] leading-5 text-red-600">{err}</div>}
                 </div>
             </div>
         </div>

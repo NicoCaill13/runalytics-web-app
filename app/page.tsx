@@ -1,3 +1,4 @@
+
 export default function HomePage() {
   return (
     <div className="min-h-dvh p-6">
@@ -6,5 +7,6 @@ export default function HomePage() {
         Accès autorisé (protégé par le middleware).
       </p>
     </div>
+
   );
 }

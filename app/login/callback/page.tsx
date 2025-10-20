@@ -1,58 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { looksLikeJwt } from '@/lib/auth';
+import { useAuth } from '@/components/auth/AuthProvider';
 
-function looksLikeJwt(v: string) {
-    return /^[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+$/.test(v);
-}
 
-function getNextParam() {
-    try {
-        const p = new URLSearchParams(window.location.search);
-        const n = p.get('next');
-        if (n && n.startsWith('/')) return n;
-    } catch { }
-    return '/';
-}
-
-export default function LoginCallbackPage() {
-    const [error, setError] = useState<string | null>(null);
+export default function LoginCallback() {
+    const router = useRouter();
+    const params = useSearchParams();
+    const { setAuthed } = useAuth();
 
     useEffect(() => {
-        try {
-            const params = new URLSearchParams(window.location.search);
+        (async () => {
             const token = params.get('token') || '';
+
             if (!looksLikeJwt(token)) {
-                setError('Token invalide ou manquant.');
+                router.replace('/login');
                 return;
             }
 
-            // 1) stocke en localStorage (specs)
-            localStorage.setItem('runalytics.jwt', token);
+            try { localStorage.setItem('runalytics.jwt', token); } catch { }
 
-            // 2) set cookie lisible par le middleware (non HttpOnly)
-            document.cookie = `runalytics.jwt=${token}; Path=/; Max-Age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
+            const res = await fetch('/api/session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ token }),
+            });
+            setAuthed(true);
+            if (!res.ok) {
+                router.replace('/login');
+                return;
+            }
 
-            // 3) redirige vers next=/... ou /
-            const next = getNextParam();
-            window.location.replace(next);
-        } catch (e: any) {
-            setError(e?.message || 'Erreur inconnue.');
-        }
-    }, []);
+            router.replace('/');
+        })();
+    }, [params, router]);
 
-    if (error) {
-        return (
-            <div className="min-h-dvh grid place-items-center p-6">
-                <div className="max-w-md text-center">
-                    <h1 className="text-xl font-semibold mb-2">Échec de la connexion</h1>
-                    <p className="text-sm text-neutral-600 mb-4">{error}</p>
-                    <a href="/login" className="underline">Retour à la page de connexion</a>
-                </div>
-            </div>
-        );
-    }
-
-    // Évite le flash
     return null;
 }
