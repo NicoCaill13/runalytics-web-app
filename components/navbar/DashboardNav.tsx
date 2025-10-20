@@ -11,11 +11,12 @@ export default function DashboardNav() {
             <div className="flex h-full w-full items-center justify-between px-6">
                 <div className="flex items-center gap-4">
                     <Image
-                        src="/logo.png"
+                        src="/runalytics.png"
                         width={120}
                         height={120}
                         alt="Runalytics"
                         className="h-[120px] w-[120px] object-contain"
+                        unoptimized={true}
                         priority
                     />
                     <span className="text-2xl text-center font-semibold leading-none">Runalytics, tu cours, on analyse</span>

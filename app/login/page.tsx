@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { looksLikeJwt } from '@/lib/auth';
-import { useAuthStore } from '@/store/auth';
+import { useAuth } from '@/components/auth/AuthProvider';
+
 
 const API_BASE = (process.env.BACK_APP_URL ?? 'http://localhost:3000');
 const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
@@ -11,18 +12,21 @@ const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
 export default function LoginPage() {
     const router = useRouter();
     const params = useSearchParams();
-    const isAuth = useAuthStore((s) => s.isAuthenticated);
+    const { setAuthed } = useAuth();
 
-    // Si déjà connecté, redirige en SPA
+    const getCookies = async () => {
+        await fetch('/api/session', { method: 'DELETE', credentials: 'include' });
+        setAuthed(false);
+    }
+
+
     useEffect(() => {
         try {
-            const t = localStorage.getItem('runalytics.jwt');
-            if (t && looksLikeJwt(t)) {
-                const next = params.get('next') || '/';
-                router.replace(next);
-            }
+            getCookies()
+            const next = params.get('next') || '/';
+            router.replace(next);
         } catch { }
-    }, [params, router, isAuth]);
+    }, [params, router]);
 
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);

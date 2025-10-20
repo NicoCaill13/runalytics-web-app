@@ -20,8 +20,6 @@ export default function LoginCallback() {
                 return;
             }
 
-            try { localStorage.setItem('runalytics.jwt', token); } catch { }
-
             const res = await fetch('/api/session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -10,7 +10,6 @@ export default function LogoutButton({ className }: Props) {
 
     async function handleLogout() {
         try {
-            localStorage.removeItem('runalytics.jwt');
             try {
                 await fetch('/api/session', { method: 'DELETE', credentials: 'include' });
                 setAuthed(false);
