@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { looksLikeJwt } from '@/lib/auth';
 import { useAuth } from '@/components/auth/AuthProvider';
+import LoginButton from '@/components/button/LoginButton';
 
 
 const API_BASE = (process.env.BACK_APP_URL ?? 'http://localhost:3000');
@@ -57,7 +58,7 @@ export default function LoginPage() {
                         <div className="text-2xl font-semibold tracking-tight">Runalytics</div>
                         <div className="mt-1 text-sm text-neutral-500">Connecte-toi pour continuer</div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={startLogin}
                         disabled={loading}
@@ -65,7 +66,9 @@ export default function LoginPage() {
                     >
                         {loading ? 'Connexion…' : 'Se connecter'}
                     </button>
-                    {err && <div className="mt-4 text-[12px] leading-5 text-red-600">{err}</div>}
+                    {err && <div className="mt-4 text-[12px] leading-5 text-red-600">{err}</div>} */}
+
+                    <LoginButton />
                 </div>
             </div>
         </div>

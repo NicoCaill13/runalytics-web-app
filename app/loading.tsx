@@ -1,4 +1,3 @@
-import LogoSpinner from '@/components/loader/LogoSpinner';
 
 export default function Loading() {
     return (
@@ -7,7 +6,6 @@ export default function Loading() {
             aria-live="polite"
             className="fixed inset-0 grid place-items-center bg-background/60 backdrop-blur-sm"
         >
-            <LogoSpinner size={128} />
         </div>
     );
 }

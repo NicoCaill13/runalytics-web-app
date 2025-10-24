@@ -17,6 +17,21 @@ const syncStrava = async (token: string) => {
     return payload.user.id
 }
 
+const getSetup = async () => {
+    const res = await fetch(
+        `/api/sync-strava`,
+        {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    );
+    const result = await res.json();
+    return result
+
+}
 
 export default function LoginCallback() {
     const router = useRouter();
@@ -44,11 +59,22 @@ export default function LoginCallback() {
                 return;
             }
 
-            console.log("token from callback ", await syncStrava(token))
+            await syncStrava(token)
+            const setup = await getSetup()
+            if (setup.needsSetup) {
+                router.replace('/profile');
+            }
+            else {
+                router.replace('/');
+            }
 
-            router.replace('/');
         })();
     }, [params, router]);
 
-    return null;
+    return (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/10 backdrop-blur-sm">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-black border-b-transparent" />
+            <p className="text-sm text-gray-800">Récupération de tes activités…</p>
+        </div>
+    );
 }
