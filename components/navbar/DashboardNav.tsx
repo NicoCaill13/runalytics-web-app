@@ -22,7 +22,7 @@ export default function DashboardNav() {
                     />
                     <span className="text-2xl text-center font-semibold leading-none">Runalytics, tu cours, on analyse</span>
                 </div>
-                <nav className="flex items-center gap-3">
+                <nav className="flex items-center">
                     {authed ? <LogoutButton /> : null}
                 </nav>
             </div>
