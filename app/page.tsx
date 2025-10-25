@@ -1,3 +1,5 @@
+import LogoSpinner from '@/components/loader/LogoSpinner';
+import { Suspense } from 'react';
 
 export default function HomePage() {
   return (

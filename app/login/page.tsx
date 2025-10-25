@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { looksLikeJwt } from '@/lib/auth';
-import { useAuthStore } from '@/store/auth';
+import { useAuth } from '@/components/auth/AuthProvider';
+import LoginButton from '@/components/button/LoginButton';
+
 
 const API_BASE = (process.env.BACK_APP_URL ?? 'http://localhost:3000');
 const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
@@ -11,18 +13,21 @@ const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
 export default function LoginPage() {
     const router = useRouter();
     const params = useSearchParams();
-    const isAuth = useAuthStore((s) => s.isAuthenticated);
+    const { setAuthed } = useAuth();
 
-    // Si déjà connecté, redirige en SPA
+    const getCookies = async () => {
+        await fetch('/api/session', { method: 'DELETE', credentials: 'include' });
+        setAuthed(false);
+    }
+
+
     useEffect(() => {
         try {
-            const t = localStorage.getItem('runalytics.jwt');
-            if (t && looksLikeJwt(t)) {
-                const next = params.get('next') || '/';
-                router.replace(next);
-            }
+            getCookies()
+            const next = params.get('next') || '/';
+            router.replace(next);
         } catch { }
-    }, [params, router, isAuth]);
+    }, [params, router]);
 
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
@@ -53,7 +58,7 @@ export default function LoginPage() {
                         <div className="text-2xl font-semibold tracking-tight">Runalytics</div>
                         <div className="mt-1 text-sm text-neutral-500">Connecte-toi pour continuer</div>
                     </div>
-                    <button
+                    {/* <button
                         type="button"
                         onClick={startLogin}
                         disabled={loading}
@@ -61,7 +66,9 @@ export default function LoginPage() {
                     >
                         {loading ? 'Connexion…' : 'Se connecter'}
                     </button>
-                    {err && <div className="mt-4 text-[12px] leading-5 text-red-600">{err}</div>}
+                    {err && <div className="mt-4 text-[12px] leading-5 text-red-600">{err}</div>} */}
+
+                    <LoginButton />
                 </div>
             </div>
         </div>

@@ -58,3 +58,14 @@ body {
 .btn-ghost {
     @apply border border-gray-300 hover:bg-gray-50;
 }
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.logo-spin {
+    animation: spin 1.2s linear infinite;
+    will-change: transform;
+}

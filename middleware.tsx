@@ -1,5 +1,4 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
 import { decodeExp, decodePayload, isJwtValid } from './lib/auth';
 
@@ -15,16 +14,12 @@ const redirectToLoginPage = (request: NextRequest) => {
 
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
-    const cookieStore = await cookies()
-    const hasCookie = cookieStore.has('runalytics.jwt')
-
-    console.log("path", path)
-    console.log("isPublicPath", isPublicPath(path))
-
-
-    const jwt = cookieStore.get('runalytics.jwt')?.value
 
     if (isPublicPath(path) === false) {
+        const cookieStore = await cookies()
+        const hasCookie = cookieStore.has('runalytics.jwt')
+        const jwt = cookieStore.get('runalytics.jwt')?.value
+
         if (!hasCookie) {
             return redirectToLoginPage(request);
         }

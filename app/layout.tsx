@@ -16,7 +16,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-dvh bg-white text-black">
         <AuthProvider initialAuthed={initialAuthed}>
           <DashboardNav />
-          <main className="min-h-[calc(100dvh-150px)]">{children}</main>
+          <main className="min-h-screen w-full text-neutral-100 py-8 flex items-start justify-center">{children}</main>
         </AuthProvider>
 
       </body>
