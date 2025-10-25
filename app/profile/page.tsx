@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import { FormField } from '@/components/form/FormField';
 import { UserCard } from '@/components/user/UserCard';
 
+import type { PanelKey } from "@/components/user/UserCard";
+import { ProfilePanel } from '@/components/user/ProfilePanel';
 
 type ProfileInitResponse = {
     userId: string;
@@ -33,6 +35,8 @@ export default function ProfilePage() {
     const [loadingInit, setLoadingInit] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [err, setErr] = useState<string | null>(null);
+
+    const [selectedPanel, setSelectedPanel] = useState<PanelKey>("profile");
 
     useEffect(() => {
         async function load() {
@@ -131,91 +135,26 @@ export default function ProfilePage() {
         <main className="w-full text-neutral-100 py-8 flex items-start justify-center">
             <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
 
-                <UserCard firstName={firstName} lastName={lastName} age={age} profile={profile} vma={vma} hrMax={hrMax} hrRest={hrRest} top={vma} />
+                <UserCard firstName={firstName} lastName={lastName} age={age} profile={profile} vma={vma} hrMax={hrMax} hrRest={hrRest} top={vma} onSelect={(panel) => {
+                    setSelectedPanel(panel);
+                }} />
 
                 <section className="rounded-3xl border border-neutral-700/60 bg-[#0f1624] text-neutral-100 shadow-[0_30px_120px_rgba(0,0,0,0.8)] p-6 flex flex-col">
-                    <header className="mb-4">
-                        <h2 className="text-white text-base font-semibold tracking-[-0.03em] flex items-center gap-2">
-                            <span className="inline-block w-2 h-2 rounded-full bg-gradient-to-br from-[#FFD400] via-[#FF8A00] to-[#FF3D00] shadow-[0_0_20px_rgba(255,138,0,0.7)]" />
-                            Vérifie tes infos
-                        </h2>
-                        <p className="text-[12px] text-neutral-400 leading-relaxed mt-1">
-                            Dis-nous où tu en es physiquement. On s’occupe du reste.
-                        </p>
-                    </header>
-
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1">
-                        <FormField
-                            label="VMA"
-                            helper="Ta vitesse max aérobie actuelle"
-                            value={vma}
-                            onChange={setVma}
-                            placeholder="16.2"
-                            unit="km/h"
-                            required
-                            inputMode="decimal"
+                    {selectedPanel === "profile" && (
+                        <ProfilePanel
+                            err={err}
+                            vma={vma}
+                            setVma={setVma}
+                            age={age}
+                            setAge={setAge}
+                            hrMax={hrMax}
+                            setHrMax={setHrMax}
+                            hrRest={hrRest}
+                            setHrRest={setHrRest}
+                            submitting={submitting}
+                            handleSubmit={handleSubmit}
                         />
-
-                        <FormField
-                            label="Âge"
-                            helper="Pour estimer les zones cardiaques"
-                            value={age}
-                            onChange={setAge}
-                            placeholder="32"
-                            unit="ans"
-                            required
-                            inputMode="numeric"
-                        />
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <FormField
-                                label="FC Max"
-                                helper="Pic max en effort total"
-                                value={hrMax}
-                                onChange={setHrMax}
-                                placeholder="190"
-                                unit="bpm"
-                                required
-                                inputMode="numeric"
-                            />
-                            <FormField
-                                label="FC Repos"
-                                helper="Au calme, le matin"
-                                value={hrRest}
-                                onChange={setHrRest}
-                                placeholder="52"
-                                unit="bpm"
-                                required
-                                inputMode="numeric"
-                            />
-                        </div>
-
-                        {err && (
-                            <p className="text-red-400 text-[12px] leading-snug border border-red-500/30 bg-red-500/10 rounded-lg px-3 py-2">
-                                {err}
-                            </p>
-                        )}
-
-                        <div className="mt-auto flex flex-col gap-4">
-                            <button
-                                type="submit"
-                                disabled={submitting}
-                                className="inline-flex justify-center items-center rounded-xl text-sm font-semibold px-4 py-3
-                           bg-gradient-to-br from-[#FFD400] via-[#FF8A00] to-[#FF3D00]
-                           text-neutral-900 shadow-[0_20px_60px_rgba(255,138,0,0.4)]
-                           hover:shadow-[0_30px_80px_rgba(255,138,0,0.55)]
-                           active:scale-[0.99]
-                           disabled:opacity-40 disabled:cursor-not-allowed
-                           transition-all"
-                            >
-                                {submitting ? 'Enregistrement…' : 'Valider et continuer →'}
-                            </button>
-
-                            <p className="text-[11px] text-neutral-500 leading-relaxed text-center">
-                                Tu pourras ajuster ces valeurs ensuite dans ton profil.
-                            </p>
-                        </div>
-                    </form>
+                    )}
                 </section>
             </div>
         </main>

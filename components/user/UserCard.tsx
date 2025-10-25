@@ -6,7 +6,11 @@ import { RangeComputeProps } from "./RangeCompute"
 import { IdentityHeaderProps } from "./IdentityHeader"
 import { InfoColProps } from "./InfoCol"
 
-interface UserCardProp extends RangeComputeProps, IdentityHeaderProps, InfoColProps { }
+export type PanelKey = "profile" | "zones" | "trainingLoad" | "goals";
+
+interface UserCardProp extends RangeComputeProps, IdentityHeaderProps, InfoColProps {
+    onSelect: (key: PanelKey) => void;
+}
 
 export const UserCard: React.FC<UserCardProp> = ({
     firstName,
@@ -15,7 +19,8 @@ export const UserCard: React.FC<UserCardProp> = ({
     profile,
     vma,
     hrMax,
-    hrRest
+    hrRest,
+    onSelect
 }) => {
     return (
         <section className="rounded-3xl bg-white text-neutral-900 shadow-[0_40px_120px_rgba(0,0,0,0.6)] overflow-hidden border border-neutral-800/10 relative">
@@ -32,6 +37,34 @@ export const UserCard: React.FC<UserCardProp> = ({
                     <InfoCol top={hrRest || '—'} bottom="FC Repos (bpm)" />
                 </div>
             </div>
+
+
+            <nav className="flex flex-col border-t border-neutral-700/60 divide-y divide-neutral-800/40">
+                <UserCardActionRow
+                    label="Profil & calibration"
+                    desc="Âge, VMA, fréquences cardiaques"
+                    onClick={() => onSelect("profile")}
+                />
+
+                <UserCardActionRow
+                    label="Objectifs"
+                    desc="10 km, semi, marathon…"
+                    onClick={() => onSelect("goals")}
+                />
+
+                <UserCardActionRow
+                    label="Charge hebdo"
+                    desc="Volume km, ratio EF/Qualité, fatigue"
+                    onClick={() => onSelect("trainingLoad")}
+                />
+
+                <UserCardActionRow
+                    label="Zones & allures"
+                    desc="Z2 endurance, Z3 tempo, seuil"
+                    onClick={() => onSelect("zones")}
+                />
+            </nav>
+
             <div className="bg-white text-neutral-900 border-t border-neutral-200 pt-10 pb-6 px-8">
                 <div className="mt-6 text-[11px] text-neutral-500 text-center">
                     Ces valeurs servent à calibrer tes allures et ta charge d’entraînement.
@@ -39,4 +72,34 @@ export const UserCard: React.FC<UserCardProp> = ({
             </div>
         </section>
     )
+}
+
+function UserCardActionRow({
+    label,
+    desc,
+    onClick,
+}: {
+    label: string;
+    desc: string;
+    onClick: () => void;
+}) {
+    return (
+        <button
+            onClick={onClick}
+            className="flex items-start justify-between w-full text-left px-6 py-4 hover:bg-neutral-800/30 transition"
+        >
+            <div className="flex flex-col">
+                <span className="text-sm font-semibold text-neutral-100 leading-tight">
+                    {label}
+                </span>
+                <span className="text-[11px] text-neutral-400 leading-tight">
+                    {desc}
+                </span>
+            </div>
+
+            <div className="text-neutral-500 text-xs font-semibold pl-4">
+                ▶
+            </div>
+        </button>
+    );
 }
