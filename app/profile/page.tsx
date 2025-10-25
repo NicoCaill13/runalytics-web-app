@@ -155,6 +155,27 @@ export default function ProfilePage() {
                             handleSubmit={handleSubmit}
                         />
                     )}
+
+                    {selectedPanel === "trainingLoad" && (
+                        <PlaceholderPanel
+                            title="Charge hebdo"
+                            desc="Volume total, ratio EF/Qualité, fatigue subjective."
+                        />
+                    )}
+
+                    {selectedPanel === "goals" && (
+                        <PlaceholderPanel
+                            title="Objectifs"
+                            desc="Ici tu verras tes objectifs actifs (10 km, marathon...) et leur état de préparation."
+                        />
+                    )}
+
+                    {selectedPanel === "zones" && (
+                        <PlaceholderPanel
+                            title="Zones & allures"
+                            desc="Guide d'allure : EF, tempo, seuil. Bientôt : conseils séance par séance."
+                        />
+                    )}
                 </section>
             </div>
         </main>
@@ -164,6 +185,25 @@ export default function ProfilePage() {
 /* ------------------------------------------------------------------
  * Subcomponents
  * ------------------------------------------------------------------*/
+
+function PlaceholderPanel({ title, desc }: { title: string; desc: string }) {
+    return (
+        <div className="flex flex-col flex-1">
+            <header className="mb-4">
+                <h2 className="text-white text-base font-semibold tracking-[-0.03em]">
+                    {title}
+                </h2>
+                <p className="text-[12px] text-neutral-400 leading-relaxed mt-1">
+                    {desc}
+                </p>
+            </header>
+
+            <div className="text-[12px] text-neutral-500 leading-relaxed border border-neutral-700/60 bg-neutral-800/30 rounded-xl p-4">
+                Cette section n'est pas encore interactive.
+            </div>
+        </div>
+    );
+}
 
 function LoaderBlock({ label }: { label: string }) {
     return (
