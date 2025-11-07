@@ -4,30 +4,38 @@ import { FormFieldProps } from "../form/FormField";
 interface ProfilePageProps extends FormFieldProps {
     err: string | null;
     vma: string;
+    vmaEstimate: string;
     setVma: (v: string) => void;
     age: string;
     setAge: (v: string) => void;
+    birthDay: string;
+    setBirthDay: (v: string) => void;
     hrMax: string;
     setHrMax: (v: string) => void;
     hrRest: string;
     setHrRest: (v: string) => void;
     submitting: boolean;
     handleSubmit: (e: React.FormEvent) => void;
+    isDisabled: boolean
 }
 
 export const ProfilePanel: React.FC<ProfilePageProps> = ({
     err,
     vma,
     setVma,
-    age,
-    setAge,
+    vmaEstimate,
+    birthDay,
+    setBirthDay,
     hrMax,
     setHrMax,
     hrRest,
     setHrRest,
     submitting,
     handleSubmit,
+    isDisabled
 }) => {
+    const onClick = () => setVma(vmaEstimate)
+    const disabled = !!vma;
     return (
         <>
             <header className="mb-4">
@@ -41,26 +49,50 @@ export const ProfilePanel: React.FC<ProfilePageProps> = ({
             </header>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-5 flex-1">
-                <FormField
-                    label="VMA"
-                    helper="Ta vitesse max aérobie actuelle"
-                    value={vma}
-                    onChange={setVma}
-                    placeholder="16.2"
-                    unit="km/h"
-                    required
-                    inputMode="decimal"
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <FormField
+                        label="VMA"
+                        helper="Ta vitesse max aérobie actuelle"
+                        value={vma}
+                        onChange={setVma}
+                        placeholder="16.2"
+                        unit="km/h"
+                        required
+                        inputMode="decimal"
+                    />
+
+                    <div className="flex flex-col gap-2">
+                        <div className="flex flex-col leading-tight">
+                            <label className="text-[13px] text-neutral-100 font-semibold tracking-[-0.03em] flex items-baseline gap-1">
+                                Estimation VMA
+                            </label>
+                            <span className="text-[11px] text-neutral-500 font-normal">
+                                On peut estimer ta VMA grace à ton activité
+                            </span>
+                        </div>
+                        <button
+                            disabled={disabled}
+                            onClick={onClick}
+                            className="bg-gradient-to-br from-[#FFD400] via-[#FF8A00] to-[#FF3D00] text-white font-bold py-2 px-4 rounded-xl 
+                            disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none">
+                            Estimer ma VMA
+                        </button>
+                    </div>
+
+                </div>
 
                 <FormField
-                    label="Âge"
+                    label="Date de naissance"
                     helper="Pour estimer les zones cardiaques"
-                    value={age}
-                    onChange={setAge}
-                    placeholder="32"
-                    unit="ans"
+                    value={birthDay}
+                    onChange={setBirthDay}
+                    placeholder={birthDay}
+                    unit=""
                     required
-                    inputMode="numeric"
+                    inputMode="none"
+                    type="date"
+                    isDisabled={isDisabled}
+
                 />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -98,8 +130,7 @@ export const ProfilePanel: React.FC<ProfilePageProps> = ({
                         disabled={submitting}
                         className="inline-flex justify-center items-center rounded-xl text-sm font-semibold px-4 py-3
               bg-gradient-to-br from-[#FFD400] via-[#FF8A00] to-[#FF3D00]
-              text-neutral-900 shadow-[0_20px_60px_rgba(255,138,0,0.4)]
-              hover:shadow-[0_30px_80px_rgba(255,138,0,0.55)]
+              text-white shadow-[0_20px_60px_rgba(255,138,0,0.4)]
               active:scale-[0.99]
               disabled:opacity-40 disabled:cursor-not-allowed
               transition-all"

@@ -29,7 +29,9 @@ const getSetup = async () => {
         }
     );
     const result = await res.json();
-    return result
+    console.log(result)
+
+    return result.data
 
 }
 
@@ -46,7 +48,6 @@ export default function LoginCallback() {
                 router.replace('/login');
                 return;
             }
-
             const res = await fetch('/api/session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -61,13 +62,8 @@ export default function LoginCallback() {
 
             await syncStrava(token)
             const setup = await getSetup()
-            if (setup.needsSetup) {
-                router.replace('/profile');
-            }
-            else {
-                router.replace('/');
-            }
 
+            router.replace(`/?needsSetup=${setup.needsSetup}`);
         })();
     }, [params, router]);
 

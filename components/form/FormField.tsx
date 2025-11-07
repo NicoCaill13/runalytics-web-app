@@ -6,7 +6,9 @@ export interface FormFieldProps {
     required?: boolean;
     placeholder?: string;
     unit?: string;
-    inputMode?: 'decimal' | 'numeric';
+    inputMode?: 'decimal' | 'numeric' | 'none';
+    type?: 'date' | 'text';
+    isDisabled?: boolean
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -17,7 +19,9 @@ export const FormField: React.FC<FormFieldProps> = ({
     required,
     placeholder,
     unit,
-    inputMode
+    inputMode,
+    type,
+    isDisabled = false
 }) => {
 
     return (
@@ -47,7 +51,9 @@ export const FormField: React.FC<FormFieldProps> = ({
                     onChange={e => onChange(e.target.value)}
                     placeholder={placeholder}
                     inputMode={inputMode}
-                    className="w-full bg-transparent text-white placeholder-neutral-500 text-sm px-3 py-2.5 outline-none rounded-xl"
+                    type={type}
+                    disabled={isDisabled}
+                    className="w-full bg-transparent text-white placeholder-neutral-500 text-sm px-3 py-2.5 outline-none rounded-xl disabled:opacity-50"
                 />
                 {unit && (
                     <div className="pr-3 text-[11px] text-neutral-500 select-none">

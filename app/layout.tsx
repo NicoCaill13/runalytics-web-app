@@ -13,12 +13,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="fr">
-      <body className="min-h-dvh bg-white text-black">
+      <body className="min-h-dvh bg-black text-black">
         <AuthProvider initialAuthed={initialAuthed}>
           <DashboardNav />
-          <main className="min-h-screen w-full text-neutral-100 py-8 flex items-start justify-center">{children}</main>
+          {/* <main className="flex flex-row justify-center ml-8 mt-8 mr-8">{children}</main> */}
+          <main className="">{children}</main>
         </AuthProvider>
-
       </body>
     </html>
   );
