@@ -1,11 +1,15 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
-import { decodeExp, decodePayload, isJwtValid } from './lib/auth';
+import { isJwtValid } from './lib/auth';
 
-const PUBLIC_PATHS = ['/login', '/login/callback', '/api/session', '/robots.txt', '/sitemap.xml'];
-const ASSET_PREFIXES = ['/_next', '/static', '/images', '/fonts'];
+const PUBLIC_PATHS = ['/', '/login', '/register', '/login/callback', '/api/session', '/robots.txt', '/sitemap.xml'];
+const PUBLIC_FILE = /\.(?:png|jpg|jpeg|webp|gif|svg|ico|txt|xml|json|map|css|js|webm|mp4)$/i;
 
 const isPublicPath = (path: string): boolean => PUBLIC_PATHS.includes(path)
+
+const startsWithAny = (path: string, prefixes: string[]) =>
+    prefixes.some((p) => path.startsWith(p));
+
 
 const redirectToLoginPage = (request: NextRequest) => {
     const loginPath = 'login';
@@ -13,9 +17,17 @@ const redirectToLoginPage = (request: NextRequest) => {
 };
 
 export async function middleware(request: NextRequest) {
-    const path = request.nextUrl.pathname;
+    const { pathname } = request.nextUrl;
 
-    if (isPublicPath(path) === false) {
+    if (
+        startsWithAny(pathname, ['/_next', '/static', '/images', '/fonts']) ||
+        isPublicPath(pathname) ||
+        PUBLIC_FILE.test(pathname)
+    ) {
+        return NextResponse.next();
+    }
+
+    if (isPublicPath(pathname) === false) {
         const cookieStore = await cookies()
         const hasCookie = cookieStore.has('runalytics.jwt')
         const jwt = cookieStore.get('runalytics.jwt')?.value
