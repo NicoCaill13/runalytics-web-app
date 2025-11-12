@@ -8,7 +8,7 @@ export default function Header() {
         <header className="sticky top-0 z-50 w-full bg-background-light/80 backdrop-blur-sm border-b border-gray-200">
             <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-10 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="text-secondary">
+                    <div className="text-secondary ">
                         <Logo width="30" height="30" />
                     </div>
                 </div>

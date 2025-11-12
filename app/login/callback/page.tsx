@@ -2,20 +2,9 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { looksLikeJwt, decodePayload } from '@/lib/auth';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { looksLikeJwt, decodePayload, syncStrava } from '@/lib/auth';
+import { useAuth } from '@/components/auth/UserProvider';
 
-const syncStrava = async (token: string) => {
-    const payload = decodePayload(token)
-    const { id } = payload.user
-    await fetch('/api/sync-strava', {
-        method: 'POST',
-        body: JSON.stringify({ userId: id, jwt: token }),
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-    });
-    return payload.user.id
-}
 
 const getSetup = async () => {
     const res = await fetch(

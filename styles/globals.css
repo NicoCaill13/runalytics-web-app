@@ -26,7 +26,7 @@
     --radius-2xl: 16px;
     --shadow-soft: 0 10px 30px -15px rgba(12, 59, 94, .35);
 
-    --color-primary: #0d1b2a;
+    --color-primary: #063863;
     --color-primary-dark: #172a45;
     --color-secondary: #ff6700;
     --color-background-light: #f7f9fc;
@@ -86,7 +86,7 @@ body {
 }
 
 #main_parralax {
-    top: -30px !important;
+    top: -42px !important;
 }
 
 #main_parralax-overlay {
@@ -101,4 +101,11 @@ body {
 #footer_parralax-overlay {
     height: 300px;
     top: 60px;
+}
+
+button:disabled,
+input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.2);
 }

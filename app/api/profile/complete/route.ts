@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { decodePayload, getCookies } from '@/lib/auth';
+
 
 function getUserIdFromJwt(jwt: string | undefined): string | null {
     if (!jwt) return null;
@@ -14,7 +16,7 @@ function getUserIdFromJwt(jwt: string | undefined): string | null {
     }
 }
 
-const API_BASE = process.env.NEST_API_URL ?? 'http://localhost:3333';
+const API_BASE = process.env.BACK_APP_URL ?? 'http://localhost:3333';
 
 export async function POST(request: Request) {
     const cookieStore = await cookies();
@@ -26,9 +28,6 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
-    // body attendu par Nest: { vmaKph, age, hrMaxBpm, hrRestBpm }
-    // On forward tel quel. Si ton Nest attend aussi l'userId explicite,
-    // tu peux l'ajouter ici.
     const nestRes = await fetch(`${API_BASE}/api/coach/vma/setup`, {
         method: 'POST',
         headers: {
@@ -51,5 +50,32 @@ export async function POST(request: Request) {
     }
 
     const data = await nestRes.json();
+    return NextResponse.json(data, { status: 200 });
+}
+
+
+export async function PATCH(request: Request) {
+    const jwt = await getCookies()
+    const payload = decodePayload(jwt)
+    const userId = payload.id
+    if (!userId) {
+        return NextResponse.json({ error: 'NO_USER_ID' }, { status: 401 });
+    }
+    const body = await request.json().catch(() => ({}));
+    const upstream = await fetch(`${API_BASE}/api/users/${userId}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            Authorization: `Bearer ${jwt}`,
+        },
+        body: JSON.stringify(body),
+    });
+    if (!upstream.ok) {
+        const text = await upstream.text().catch(() => "");
+        return NextResponse.json({ error: text || `UPSTREAM_${upstream.status}` }, { status: 502 });
+    }
+
+    const data = await upstream.json().catch(() => ({}));
     return NextResponse.json(data, { status: 200 });
 }

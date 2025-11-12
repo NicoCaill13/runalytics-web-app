@@ -16,11 +16,11 @@ export default function Main() {
       strength={0.25}
       focalY={0.75}
     >
-      <div className="flex flex-col gap-2">
-        <h1 className="text-white text-4xl md:text-5xl font-black tracking-[-0.033em]">
+      <div className="flex flex-col gap-2 ">
+        <h1 className="text-primary text-4xl md:text-5xl font-black tracking-[-0.033em]">
           Donnez un sens à chaque foulée.
         </h1>
-        <h2 className="text-slate-300 text-base md:text-lg max-w-xl mx-auto">
+        <h2 className="max-w-xl text-xl mx-auto text-white">
           Importez vos données de course et découvrez des analyses approfondies pour progresser plus vite et éviter les blessures.
         </h2>
       </div>

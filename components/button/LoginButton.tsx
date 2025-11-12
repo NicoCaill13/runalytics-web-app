@@ -2,21 +2,17 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '../auth/AuthProvider';
-
 const API_BASE = (process.env.BACK_APP_URL ?? 'http://localhost:3000');
 const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
 
 export default function LoginButton() {
     const router = useRouter();
-    const { setAuthed } = useAuth();
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
     const params = useSearchParams();
 
     const getCookies = async () => {
         await fetch('/api/session', { method: 'DELETE', credentials: 'include' });
-        setAuthed(false);
     }
 
     useEffect(() => {

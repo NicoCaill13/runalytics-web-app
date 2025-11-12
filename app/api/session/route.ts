@@ -5,22 +5,27 @@ import { looksLikeJwt } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-
+const env = process.env.NODE_ENV
 export async function POST(req: NextRequest) {
-  const { token, maxAge } = await req.json().catch(() => ({} as any));
+  const { accessToken, maxAge } = await req.json().catch(() => ({} as any));
 
-  if (!token || !looksLikeJwt(token)) {
+  if (!accessToken || !looksLikeJwt(accessToken)) {
     return NextResponse.json({ ok: false, error: 'Invalid token' }, { status: 400 });
   }
   const cookieStore = await cookies()
 
-  cookieStore.set('runalytics.jwt', token, { secure: true })
+  cookieStore.set('runalytics.jwt', accessToken, {
+    secure: env === 'development' ? false : true, httpOnly: true,
+    path: '/',
+  })
+
+  console.log(cookieStore.getAll())
 
   return NextResponse.json({ ok: true });
 }
 
 export async function DELETE() {
-    const cookieStore = await cookies()
+  const cookieStore = await cookies()
   cookieStore.delete('runalytics.jwt');
 
   return NextResponse.json({ ok: true });

@@ -64,35 +64,33 @@ export default function ParallaxSection({
   }, [strength]);
 
   return (
-    <section id={id} className="w-full">
+    <section className="w-full">
       <div ref={ref} className="relative w-full overflow-clip" style={{ minHeight }}>
         <div
-          aria-hidden
+          id={`${id}-wrapper`}
           className="absolute inset-0 -z-10 will-change-transform pointer-events-none"
           style={{ transform: `translate3d(0, ${offset}px, 0)` }}
         >
           <Image
             src={src}
+
             id={id}
             alt=""
             fill
             priority={priority}
-            quality={90}
             sizes={sizes}
             className="object-cover"
-            style={{ objectPosition: `center ${Math.round(focalY * 100)}%` }}
+            style={{
+              objectPosition: `center ${Math.round(focalY * 100)}%`,
+            }}
           />
-          {!!overlay &&
-            <div id={`${id}-overlay`} className="absolute inset-0" style={{ background: gradient }} />
-          }
+
         </div>
 
         <div
           className={`${className} ${center ? "grid place-items-center" : ""}`}
-          // clé: l'inner a la même min-height => la grille peut centrer verticalement
           style={{ minHeight }}
         >
-          {/* si tu veux du gap entre éléments, garde un conteneur flex ici */}
           <div className="flex flex-col items-center gap-6 text-center">
             {children}
           </div>

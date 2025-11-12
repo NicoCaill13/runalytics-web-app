@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     if (
-        startsWithAny(pathname, ['/_next', '/static', '/images', '/fonts']) ||
+        startsWithAny(pathname, ['/_next', '/static', '/images', '/fonts', '/api']) ||
         isPublicPath(pathname) ||
         PUBLIC_FILE.test(pathname)
     ) {

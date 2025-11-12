@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { looksLikeJwt } from '@/lib/auth';
-import { useAuth } from '@/components/auth/AuthProvider';
 import LoginButton from '@/components/button/LoginButton';
 
 
@@ -13,13 +11,10 @@ const LOGIN_URL = `${API_BASE}/api/auth/login-url`;
 export default function LoginPage() {
     const router = useRouter();
     const params = useSearchParams();
-    const { setAuthed } = useAuth();
 
     const getCookies = async () => {
         await fetch('/api/session', { method: 'DELETE', credentials: 'include' });
-        setAuthed(false);
     }
-
 
     useEffect(() => {
         try {
@@ -58,16 +53,6 @@ export default function LoginPage() {
                         <div className="text-2xl font-semibold tracking-tight">Runalytics</div>
                         <div className="mt-1 text-sm text-neutral-500">Connecte-toi pour continuer</div>
                     </div>
-                    {/* <button
-                        type="button"
-                        onClick={startLogin}
-                        disabled={loading}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 bg-black text-white font-semibold shadow hover:opacity-90 active:opacity-80 transition disabled:opacity-50"
-                    >
-                        {loading ? 'Connexion…' : 'Se connecter'}
-                    </button>
-                    {err && <div className="mt-4 text-[12px] leading-5 text-red-600">{err}</div>} */}
-
                     <LoginButton />
                 </div>
             </div>

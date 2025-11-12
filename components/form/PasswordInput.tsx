@@ -8,12 +8,25 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   name: string;
   placeholder?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>; // event
+  onValueChange?: (v: string) => void;
 };
 
 
-export default function PasswordInput({ label = "Mot de passe", name, placeholder = "8 caractères minimum", ...rest }: Props) {
+export default function PasswordInput({
+  label = "Mot de passe",
+  name, placeholder = "8 caractères minimum",
+  onChange,
+  onValueChange,
+  ...rest
+}: Props) {
   const [show, setShow] = React.useState(false);
   const type = show ? "text" : "password";
+
+  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    onChange?.(e);                 // propage l’event si fourni
+    onValueChange?.(e.target.value); // propage la valeur si fourni
+  };
 
 
   return (
@@ -27,13 +40,15 @@ export default function PasswordInput({ label = "Mot de passe", name, placeholde
           type={type}
           name={name}
           placeholder={placeholder}
-          className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-primary-light dark:text-text-primary-dark focus:outline-0 focus:ring-2 focus:ring-accent/50 border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 focus:border-accent h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
+          onChange={handleChange}
+          className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-text-primary-light dark:text-text-primary-dark focus:outline-0 focus:ring-2 focus:ring-accent/50 border border-border-light dark:border-border-dark bg-white  focus:border-accent h-14 placeholder:text-text-secondary-light dark:placeholder:text-text-secondary-dark p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal"
         />
+
         <button
           type="button"
           aria-label={show ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           onClick={() => setShow((s) => !s)}
-          className="text-text-secondary-light dark:text-text-secondary-dark flex border border-border-light dark:border-border-dark bg-white dark:bg-background-dark/50 items-center justify-center pr-[15px] rounded-r-lg border-l-0"
+          className="text-text-secondary-light dark:text-text-secondary-dark flex border border-border-light dark:border-border-dark bg-white items-center justify-center pr-[15px] rounded-r-lg border-l-0"
         >
           {show ? (
             // œil barré

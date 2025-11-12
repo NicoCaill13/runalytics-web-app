@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { useAuth } from '@/components/auth/UserProvider';
 type Props = { className?: string };
 
 export default function LogoutButton({ className }: Props) {

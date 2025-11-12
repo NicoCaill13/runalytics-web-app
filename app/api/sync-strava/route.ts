@@ -24,13 +24,13 @@ export async function GET(req: Request) {
     if (!hasCookie) {
       throw new Error(`Response status:`);
     }
+    const url = new URL(req.url);
+    const next = url.searchParams.get("next") ?? "/profile";
 
     const token = cookieStore.get('runalytics.jwt')?.value;
-    const payload = decodePayload(token)
-    const { id } = payload.user
     const response = await fetch(
 
-      `${process.env.BACK_APP_URL}/api/coach/vma/estimate/${id}`,
+      `${process.env.BACK_APP_URL}/api/strava/login?next=${encodeURIComponent(next)}`,
       {
         method: 'GET', credentials: 'include',
         headers: {
