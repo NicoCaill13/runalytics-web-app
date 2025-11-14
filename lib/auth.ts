@@ -1,7 +1,4 @@
-// Utilitaires JWT côté client (validation "basique" = expiration uniquement)
-
-import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { UserProfile } from "./type";
 
 export function getStoredJwt(): string | null {
   try {
@@ -11,14 +8,6 @@ export function getStoredJwt(): string | null {
   }
 }
 
-export const getCookies = async () => {
-  const cookieStore = await cookies();
-  const hasJwt = cookieStore.has("runalytics.jwt");
-  if (!hasJwt) return NextResponse.json({ error: 'NO_JWT' }, { status: 401 });
-
-  const jwt = cookieStore.get('runalytics.jwt')?.value;
-  return jwt
-}
 
 
 export function setStoredJwt(token: string) {
@@ -114,4 +103,9 @@ export const syncStrava = async (token: string) => {
     credentials: 'include',
   });
   return payload.user.id
+}
+
+export function hasActiveProvider(user?: UserProfile | null) {
+  if (!user?.providerAccounts || !Array.isArray(user.providerAccounts)) return false;
+  return user.providerAccounts.some((p) => p?.isActive === true);
 }

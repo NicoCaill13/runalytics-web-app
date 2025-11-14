@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
-import { decodePayload, getCookies } from '@/lib/auth';
+import { decodePayload } from '@/lib/auth';
+import { getCookies } from '@/lib/server';
 
 
 function getUserIdFromJwt(jwt: string | undefined): string | null {

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { decodePayload, getCookies } from '@/lib/auth';
+import { decodePayload } from '@/lib/auth';
+import { getCookies } from '@/lib/server';
 
 // A adapter : URL de ton backend Nest
 const API_BASE = process.env.BACK_APP_URL

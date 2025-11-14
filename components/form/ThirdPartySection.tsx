@@ -31,12 +31,36 @@ export default function ThirdPartySection() {
         return Boolean(acc && acc.isActive === true);
     };
 
+    const toggleActive = async (provider: Provider, isActive: boolean) => {
+        const status = isActive ? "reactivate" : "deactivate"
+        setLoading(provider);
+        setError(null);
+        try {
+            const LOGIN_URL = `api/provider/status?action=${status}`;
+            await fetch(LOGIN_URL, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json'
+                },
+            });
+            await refresh();
+
+        } catch (error: any) {
+            console.error(error)
+            setError(error?.message || 'Erreur réseau');
+            setLoading(null);
+        }
+        finally {
+            setLoading(null);
+        }
+    }
+
 
     async function deactivateProvider(provider: Provider) {
-        console.log('Apple comming soon')
+        await toggleActive(provider, false)
     }
     async function reactivateProvider(provider: Provider) {
-        console.log('Garmin comming soon')
+        await toggleActive(provider, true)
     }
 
     async function connectProvider(provider: Provider) {

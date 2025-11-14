@@ -14,13 +14,10 @@ export default function StravaCallback() {
         const provider = sp.get("provider");
         if (!status && !provider) return;
 
-        // on vient visiblement d’un callback OAuth → recharge profil (providers connectés)
         (async () => {
             await refresh();
-            // nettoie l’URL pour enlever ?provider=...&status=...
             router.replace("/profile");
         })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sp]);
 
     return null;
