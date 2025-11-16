@@ -19,8 +19,6 @@ export async function POST(req: NextRequest) {
     path: '/',
   })
 
-  console.log(cookieStore.getAll())
-
   return NextResponse.json({ ok: true });
 }
 

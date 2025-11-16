@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     const token = cookieStore.get('runalytics.jwt')?.value;
     const response = await fetch(
 
-      `${process.env.BACK_APP_URL}/api/strava/login?next=${encodeURIComponent(next)}`,
+      `${process.env.BACK_APP_URL}/api/oauth/strava/login?next=${encodeURIComponent(next)}`,
       {
         method: 'GET', credentials: 'include',
         headers: {

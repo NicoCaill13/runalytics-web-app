@@ -9,7 +9,6 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const action = searchParams.get("action");
-        console.log(action)
         const jwt = await getCookies()
         const payload = decodePayload(jwt)
         const userId = payload.id
@@ -18,7 +17,7 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: 'NO_USER_ID' }, { status: 401 });
         }
 
-        const response = await fetch(`${API_BASE}/api/strava/${action}/strava/${userId}`, {
+        const response = await fetch(`${API_BASE}/api/oauth/strava/${action}/${userId}`, {
             method: 'GET', credentials: 'include',
             headers: {
                 'Authorization': `Bearer ${jwt}`,

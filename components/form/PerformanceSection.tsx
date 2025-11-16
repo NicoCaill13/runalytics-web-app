@@ -7,6 +7,8 @@ import { MetricUnit } from "@/lib/type";
 export default function PerformanceSection() {
     const { user, loading, refresh } = useUser();
     const [isSaving, setIsSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
 
     const [fcMax, setFcMax] = useState<string>(""); // FC Max (bpm)
     const [fcMin, setFcMin] = useState<string>(""); // FC Min / repos (bpm)
@@ -83,8 +85,8 @@ export default function PerformanceSection() {
             }
 
             await refresh();
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            setError(error?.message || 'Erreur réseau');
         }
         finally {
             setIsSaving(false);

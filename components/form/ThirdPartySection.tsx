@@ -46,7 +46,6 @@ export default function ThirdPartySection() {
             await refresh();
 
         } catch (error: any) {
-            console.error(error)
             setError(error?.message || 'Erreur réseau');
             setLoading(null);
         }
@@ -81,7 +80,6 @@ export default function ThirdPartySection() {
             window.location.assign(url);
 
         } catch (error: any) {
-            console.error(error)
             setError(error?.message || 'Erreur réseau');
             setLoading(null);
         }

@@ -34,8 +34,8 @@ export default function Sidebar() {
         <aside className="flex-shrink-0 w-64 bg-white border-r border-gray-100 p-4">
             <div className="flex flex-col h-full">
                 {/* Brand */}
-                <div className="flex items-center p-2 mb-2 ml-10">
-                    <Logo />
+                <div className="flex items-center p-2 mb-2 ml-5">
+                    <Logo width="150" height="150" />
                 </div>
 
                 {/* User */}

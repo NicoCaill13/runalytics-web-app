@@ -12,6 +12,7 @@ export default function PersonalInfoSection() {
   const [lastName, setLastName] = useState('');
   const [gender, setGender] = useState('');
   const [weight, setWeight] = useState(80);
+  const [error, setError] = useState<string | null>(null);
 
   const calculateAge = (birthday: string | Date): number => {
     const ageDifMs = Date.now() - new Date(birthday).getTime();
@@ -50,8 +51,8 @@ export default function PersonalInfoSection() {
         throw new Error(msg || "Échec de la mise à jour du profil.");
       }
       await refresh();
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      setError(error?.message || 'Erreur réseau');
     }
     finally {
       setIsSaving(false);
