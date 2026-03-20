@@ -26,6 +26,19 @@ type Physio = {
     source: ValueSource
 }
 
+export type VmaMetric = {
+    id: string;
+    metric: "VMA";
+    value: number;
+    source: "ESTIMATED" | "USER";
+    windowStart: string | null;
+    windowEnd: string | null;
+    runsCount: number;
+    note: string | null;
+    payload: any | null;
+    createdAt: string;
+};
+
 export type Unit = "METRIC" | "IMPERIAL";
 export type ValueSource = "ESTIMATED" | "USER";
 export type HeartUnit = "HRR" | "FC_MAX";

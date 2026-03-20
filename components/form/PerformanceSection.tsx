@@ -10,8 +10,9 @@ export default function PerformanceSection() {
     const [error, setError] = useState<string | null>(null);
 
 
-    const [fcMax, setFcMax] = useState<string>(""); // FC Max (bpm)
-    const [fcMin, setFcMin] = useState<string>(""); // FC Min / repos (bpm)
+    const [fcMax, setFcMax] = useState<string>("");
+    const [fcMin, setFcMin] = useState<string>("");
+    const [vma, setVma] = useState<string>("");
 
     const getPhysio = (p: MetricUnit) => user?.physioHistory?.find((a: any) => a.metric === p) ?? null;
 
@@ -20,15 +21,19 @@ export default function PerformanceSection() {
 
         const fcMaxPhysio = getPhysio("FC_MAX");
         const fcMinPhysio = getPhysio("FC_REPOS");
+        const vmaPhysio = getPhysio("VMA");
+        console.log(vmaPhysio)
 
         setFcMax(fcMaxPhysio && fcMaxPhysio.value != null ? String(fcMaxPhysio.value) : "");
-
         setFcMin(fcMinPhysio && fcMinPhysio.value != null ? String(fcMinPhysio.value) : "");
+        setVma(vmaPhysio && vmaPhysio.value != null ? String(vmaPhysio.value) : "");
     }, [user])
 
     const isSubmitDisabled = isSaving || !fcMin || !fcMax;
 
     async function handleSavePersonnal() {
+        console.log(vma)
+        console.log(Number(vma))
         try {
             setIsSaving(true);
             const payloads: {
@@ -50,6 +55,14 @@ export default function PerformanceSection() {
                     metric: "FC_MAX",
                     source: "USER",
                     value: Number(fcMax.replace(",", ".")),
+                });
+            }
+
+            if (vma) {
+                payloads.push({
+                    metric: "VMA",
+                    source: "USER",
+                    value: Number(vma),
                 });
             }
 
@@ -98,11 +111,11 @@ export default function PerformanceSection() {
                 <h2 className="text-secondary text-[22px] font-bold tracking-[-0.015em]">Performances</h2>
             </div>
 
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <label className="flex flex-col">
                     <div className="flex items-center gap-2 pb-2">
                         <p className="text-text-primary text-base font-medium">
-                            Fréquence Cardiaque Min (FC Min)
+                            Fréquence Cardiaque Min
                         </p>
                         <div className="group relative">
                             <span className="material-symbols-outlined text-text-secondary text-base cursor-pointer">
@@ -126,7 +139,7 @@ export default function PerformanceSection() {
                 <label className="flex flex-col">
                     <div className="flex items-center gap-2 pb-2">
                         <p className="text-text-primary text-base font-medium">
-                            Fréquence Cardiaque Max (FC Max)
+                            Fréquence Cardiaque Max
                         </p>
                         <div className="group relative">
                             <span className="material-symbols-outlined text-text-secondary text-base cursor-pointer">
@@ -145,6 +158,33 @@ export default function PerformanceSection() {
                         onChange={(e) => setFcMax(e.target.value)}
                         className="h-12 px-3 rounded-lg border border-gray-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-primary/50"
                         value={fcMax ?? ""}
+                    />
+                </label>
+                <label className="flex flex-col">
+                    <div className="flex items-center gap-2 pb-2">
+                        <p className="text-text-primary text-base font-medium">
+                            VMA
+                        </p>
+                        <div className="group relative">
+                            <span className="material-symbols-outlined text-text-secondary text-base cursor-pointer">
+                                info
+                            </span>
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-60 bg-secondary text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none border border-border-color">
+                                La VMA est la vitesse la plus élevée que tu peux maintenir en
+                                utilisant principalement ton système aérobie. C’est ta vitesse
+                                “plafond” en endurance et elle sert de base pour calibrer tous
+                                tes entraînements.
+                            </div>
+                        </div>
+                    </div>
+                    <input
+                        type="number"
+                        min={8}
+                        max={25}
+                        step="0.1"
+                        onChange={(e) => setVma(e.target.value)}
+                        className="h-12 px-3 rounded-lg border border-gray-300 bg-transparent focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        value={vma ?? ""}
                     />
                 </label>
             </div>

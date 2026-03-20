@@ -4,6 +4,8 @@
 import { useUser } from "@/components/auth/UserProvider";
 import PerformanceSection from "@/components/form/PerformanceSection";
 import { useEffect, useState } from "react";
+import { MetricUnit } from "@/lib/type";
+import VmaSection from "@/components/form/VmaSection";
 
 type Zone = {
   id: "Z1" | "Z2" | "Z3" | "Z4" | "Z5";
@@ -68,7 +70,11 @@ export default function PerformancePage() {
   const { user, loading, refresh } = useUser();
   const [vma, setVma] = useState<number>(17.5);
 
-  const fc = 0;
+  const getPhysio = (p: MetricUnit) => user?.physioHistory?.find((a: any) => a.metric === p) ?? null;
+
+  console.log(user)
+
+  const fc = 189;
 
   const ranges = {
     Z1: computeRange(fc, 0.5, 0.6),

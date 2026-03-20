@@ -6,10 +6,10 @@ export default function Header() {
     const router = useRouter();
     return (
         <header className="sticky top-0 z-50 w-full bg-background-light/80 backdrop-blur-sm border-b border-gray-200">
-            <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-10 py-3 flex items-center justify-between">
+            <div className="mx-auto w-full max-w-[1200px]  flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="text-secondary ">
-                        <Logo width="30" height="30" />
+                        <Logo width="100" height="100" />
                     </div>
                 </div>
 
@@ -20,7 +20,8 @@ export default function Header() {
                         <a className="text-sm font-medium text-slate-600 hover:text-secondary" href="#">À propos</a>
                     </nav>
                     <div className="flex gap-2">
-                        <button className="h-10 px-4 rounded-lg border border-primary/20 text-primary text-sm font-bold hover:bg-primary/5">
+                        <button className="h-10 px-4 rounded-lg border border-primary/20 text-primary text-sm font-bold hover:bg-primary/5"
+                            onClick={() => router.push("/login")}>
                             Se connecter
                         </button>
                         <button className="h-10 px-4 rounded-lg border border-primary/20 text-primary text-sm font-bold hover:bg-primary/5"
